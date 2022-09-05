@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../validation-unitls.dart';
+
 class RegisterScreen extends StatefulWidget {
 static const String routeName = 'register';
 
@@ -8,7 +10,8 @@ static const String routeName = 'register';
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-bool SecuredPassword = true ;
+bool securedPassword = true ;
+var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +38,7 @@ bool SecuredPassword = true ;
           ),
         ),
         body: Form(
+          key: formKey,
           child: Container(
             padding: EdgeInsets.all(12),
             child: Column(
@@ -42,36 +46,68 @@ bool SecuredPassword = true ;
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height*.25),
                 TextFormField(
+                  validator:(text){
+                    if(text== null || text.trim().isEmpty){
+                      return 'Please Enter Your Full Name';
+                    }
+                    return null;
+                  } ,
                 decoration: InputDecoration(
                 labelText: 'Full Name'
                   ),
                 ),
                 TextFormField(
+                  validator:(text){
+                    if(text== null || text.trim().isEmpty){
+                      return 'Please Enter Your User Name';
+                    }
+                    return null;
+                  } ,
                   decoration: InputDecoration(
                       labelText: 'User Name'
                   ),
                 ),
                 TextFormField(
+                  validator:(text){
+                    if(text== null || text.trim().isEmpty){
+                      return 'Please Enter Your Email-Adrees';
+                    }
+                    if(!ValidationUtils.isValidatEmail(text)){
+                      return 'Please Enter Your Valid Mail';
+                    }
+                    return null;
+                  } ,
                   decoration: InputDecoration(
                       labelText: 'Email-Adrees'
                   ),
                 ),
                 TextFormField(
-                  obscureText: SecuredPassword,
+                  validator:(text){
+                    if(text== null || text.trim().isEmpty){
+                      return 'Please Enter Your Password';
+                    }
+                    if (text.length<6){
+                      return 'password Too Weak';
+
+                    }
+                    return null;
+                  } ,
+                  obscureText: securedPassword,
                   decoration: InputDecoration(
                       labelText: 'Password ',
                     suffixIcon: InkWell(
                       onTap: (){
-                        SecuredPassword=!SecuredPassword;
+                        securedPassword=!securedPassword;
                         setState(() {
                         });
                       },
-                        child: Icon(SecuredPassword?Icons.visibility:
+                        child: Icon(securedPassword?Icons.visibility:
                         Icons.visibility_off))
                   ),
                 ),
                 Spacer(),
                 ElevatedButton(onPressed: (){
+                  CreatAccountCliked();
 
                 },style: ElevatedButton.styleFrom(primary:
                 Colors.white,),
@@ -89,5 +125,11 @@ bool SecuredPassword = true ;
 
       ),
     );
+  }
+  void CreatAccountCliked (){
+    if(formKey.currentState?.validate()==false){
+      return ;
+    }
+
   }
 }
